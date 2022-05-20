@@ -2,22 +2,24 @@ var config = {
     user: 'SA',
     password: 'Sher@lockIan123',
     server: 'localhost',
-    database: 'hoangne',
+    database: 'TestDB',
     trustServerCertificate: true,
     synchronize: true,
     };
     
     const sql = require('mssql');
     
-    async function importne(a2,a3,a4) {
-    try {
-    let pool = await sql.connect(config);
-    console.log(`insert into Persons (LastName,FirstName,Age) values ('${a2}','${a3}',${a4})`)
-    let products = await pool.request().query(`insert into Persons (LastName,FirstName,Age) values ('${a2}','${a3}',${a4})`);
-    return products.recordsets;
+    async function importne(title, content, point, roomid) {
+    try 
+    {
+        let pool = await sql.connect(config);
+        console.log(`insert into Stories (Title, Content, Point, RoomId) values (${title}, ${content}, ${point}, ${roomid})`)
+        let products = await pool.request().query(`insert into Stories (Title, Content, Point, RoomId) values ('${title}', '${content}', ${point}, ${roomid})`);
+        return products.recordsets;
     }
-    catch (error) {
-    console.log(error)
+    catch (error) 
+    {
+        console.log(error)
     }
 }
 

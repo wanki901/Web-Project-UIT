@@ -9,26 +9,29 @@ var workbook = new Excel.Workbook();
 
 app.get('/', function (req, res) {
     try {
-        dboperations.exportne().then(r => {
-            arr = r[0]
-            try {
+        dboperations.exportne(req.query.RoomId).then(r => {
+            arr = r[0];
+            try 
+            {
                 var workbook = new Excel.Workbook();
                 var worksheet = workbook.addWorksheet('My Sheet');
 
                 worksheet.columns = [
-                    { header: 'id', key: 'PersonId', width: 10 },
-                    { header: 'lastname', key: 'LastName', width: 32 },
-                    { header: 'firstname', key: 'FirstName', width: 32 },
-                    { header: 'age', key: 'Age', width: 10 },
+                    { header: 'Id', key: 'Id', width: 10 },
+                    { header: 'Title', key: 'Title', width: 32 },
+                    { header: 'Content', key: 'Content', width: 32 },
+                    { header: 'Point', key: 'Point', width: 10 },
+                    { header: 'RoomId', key: 'RoomId', width: 10 },
                 ];
 
-                for (var i = 0; i < arr.length; i++) {
+                for (var i = 0; i < arr.length; i++) 
+                {
                     worksheet.addRow(arr[i])
                     console.log(arr[i])
                 }
 
-                var tempFilePath = `/home/wanki/Workspace/BMW/Project/file_excel/${Math.floor(Math.random() * 1014444444)}test.xlsx`;
-                var temp = `${Math.floor(Math.random() * 1014444444)}test.xlsx`
+                var tempFilePath = process.cwd() + `/file_excel/${Math.floor(Math.random() * 1014444444)}test.xlsx`;
+                var temp = `${Math.floor(Math.random() * 1014444444)}test.xlsx`;
                 workbook.xlsx.writeFile(tempFilePath).then(function () {
                     console.log('file is written');
 
@@ -42,8 +45,6 @@ app.get('/', function (req, res) {
                 console.log(error)
             }
         })
-        // dboperations1.exportne()
-        // res.send('Hello World!')
 
     } catch (err) {
         console.log('OOOOOOO this is the error: ' + err);

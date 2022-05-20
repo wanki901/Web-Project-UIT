@@ -15,7 +15,9 @@ const csvtojson = require('csvtojson'); //npm install csvtojson
 
 var import_ne = require('/home/wanki/Workspace/BMW/Project/saveToDB.js')
 var show_ne = require('./displayResult.js');
+var getNOR = require('./getNumOfRecord.js');
 const { Console } = require('console');
+const { type } = require('express/lib/response');
 
 // body-parser middleware use
 app.use(bodyparser.json())
@@ -71,21 +73,29 @@ app.get('/', (req, res) => {
     })
 });
 
+var NOS;
 // -> Express Upload RestAPIs
 app.post('/uploadfile', upload.single("uploadfile"), (req, res) => {
     const csvTypes = /csv/;
-    if (csvTypes.test(req.file.filename))
-        importCsvData2MySQL(process.cwd()+ '/file_uploads/' + req.file.filename, res)
-    else
-        importExcelData2MySQL(process.cwd()+ '/file_uploads/' + req.file.filename, res);
+    getNOR.getNumOfStories().then(r=>{
+        if (r >= 20)
+            res.send("Too much Stories, could not import anymore");
+        else
+        {
+            if (csvTypes.test(req.file.filename)) /*---remember only 20 stories in 1 room and only room owner can import---*/
+                importCsvData2MySQL(process.cwd()+ '/file_uploads/' + req.file.filename, res, r)
+            else
+                importExcelData2MySQL(process.cwd()+ '/file_uploads/' + req.file.filename, res, r);
+        }
+    })
 });
 
 //Set Format DB for compare
-var formatDB = [ 'id', 'FirstName', 'LastName', 'Age' ];
+var formatDB = [ 'Id', 'Title', 'Content', 'Point', 'RoomId' ];
 const format = JSON.stringify(formatDB);
 
 //Import CSV data to Database
-function importCsvData2MySQL(filePath, res)
+function importCsvData2MySQL(filePath, res, currentStories)
 {
     csvtojson({
         noheader:true, //get header in csv file
@@ -93,14 +103,20 @@ function importCsvData2MySQL(filePath, res)
     })
     .fromFile(filePath)
     .then((csvRow) => {
-        const rowString = JSON.stringify(csvRow[0]);     
+        const rowString = JSON.stringify(csvRow[0]); 
+        var length = csvRow.length - 1;
+        console.log(currentStories);   
+        console.log('current stories'); 
         if (format == rowString)
         {
-            res.send("ok");
             try 
             {
-                for(var i=1;i<csvRow.length;i++)
-                    import_ne.importne(csvRow[i][1], csvRow[i][2], csvRow[i][3]);
+                if ((20 - currentStories) < length)
+                    length = 20 - currentStories;
+                console.log(length);
+                for(var i=1;i<=length;i++)
+                    import_ne.importne(csvRow[i][1], csvRow[i][2], csvRow[i][3], csvRow[i][4]);
+                res.send("success");
             } 
             catch (error) 
             {
@@ -108,20 +124,23 @@ function importCsvData2MySQL(filePath, res)
             }
         }
         else
-            res.send("nope");
+            res.send("Please right format!");
     })
 }
 
 // -> Import Excel Data to MySQL database 
-function importExcelData2MySQL(filePath, res) {
+function importExcelData2MySQL(filePath, res, currentStories) {
     readXlsxFile(filePath).then((rows) => {
-        //console.log(rows[0]);
+        var length = rows.length - 1;
         const rowString = JSON.stringify(rows[0]);     
         if (format == rowString)
         {
-            try {
-                for(var i=1;i<rows.length;i++){
-                    import_ne.importne(rows[i][1],rows[i][2],rows[i][3])
+            try 
+            {
+                if ((20 - currentStories) < length)
+                    length = 20 - currentStories;
+                for(var i = 1;i <= length;i++){
+                    import_ne.importne(rows[i][1],rows[i][2],rows[i][3], rows[i][4])
                 }
             } catch (error) {
                 console.log(error)

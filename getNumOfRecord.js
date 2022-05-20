@@ -1,5 +1,5 @@
-/* Module export */
-//Connect to DB 
+/* Show DB on <IP_Server>:8080*/
+//Connecto to DB 
 var config = {
     user: 'SA',
     password: 'Sher@lockIan123',
@@ -7,22 +7,22 @@ var config = {
     database: 'TestDB',
     trustServerCertificate: true,
     synchronize: true,
-    };
+};
 
 const sql = require('mssql');
 
-async function exportne(RoomId) {
+async function getNumOfStories() {
     try {
         let pool = await sql.connect(config);
-        //get all record
-        let products1 = await pool.request().query(`SELECT * from Stories where RoomId = ${RoomId}`);
-        return products1.recordsets;
+
+        let products1 = await pool.request().query("select * from Stories");
+        return products1.recordsets[0].length;
     }
     catch (error) {
         console.log(error)
     }
 }
-//Pack into procedure
+
 module.exports = {
-    exportne: exportne
+    getNumOfStories: getNumOfStories
 }
