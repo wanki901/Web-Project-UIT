@@ -4,13 +4,22 @@ var app = express();
 var Excel = require('exceljs'); //npm install exceljs
 var sql = require("mssql"); //npm install mssql
 var dboperations = require('./export.js')
-
+const fs = require('fs'); //npm install fs
 var workbook = new Excel.Workbook();
+const https = require('https');
+const res = require('express/lib/response');
+
+const options = {
+    key: fs.readFileSync('key.pem'),
+    cert: fs.readFileSync('cert.pem')
+};
 
 app.get('/', function (req, res) {
     try {
-        dboperations.exportne(req.query.RoomId).then(r => {
+        dboperations.exportne(req.query.Code).then(r => {
+            //console.log(r);
             arr = r[0];
+            //console.log(arr);
             try 
             {
                 var workbook = new Excel.Workbook();
@@ -21,7 +30,6 @@ app.get('/', function (req, res) {
                     { header: 'Title', key: 'Title', width: 32 },
                     { header: 'Content', key: 'Content', width: 32 },
                     { header: 'Point', key: 'Point', width: 10 },
-                    { header: 'RoomId', key: 'RoomId', width: 10 },
                 ];
 
                 for (var i = 0; i < arr.length; i++) 
@@ -51,6 +59,4 @@ app.get('/', function (req, res) {
     }
 });
 
-var server = app.listen(8080, function () {
-    console.log('Server is running..');
-});
+https.createServer(options, app).listen(8001);
