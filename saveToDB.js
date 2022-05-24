@@ -43,7 +43,7 @@ async function importne(Title, Content, Point, Code)
                 })
             })
         })
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 1000));
     }
     catch (error) 
     {

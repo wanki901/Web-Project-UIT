@@ -36,7 +36,7 @@ async function exportthieu(Code) {
                 })
             })
         })
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 1000));
         return res;
     } catch (err)
     {

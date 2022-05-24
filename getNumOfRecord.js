@@ -34,7 +34,7 @@ async function getNumOfStories(RoomCode) {
                 })
             })
         })
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 1000));
         console.log(res);
         console.log("getNumOfRecord.js");
         return res;

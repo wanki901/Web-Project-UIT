@@ -166,20 +166,20 @@ app.post('/api/import', upload.single("uploadfile"), (req, res) => {
 
             if (csvTypes.test(req.file.filename)) {
                 importCsvData2MySQL(process.cwd() + '/file_uploads/' + req.file.filename, res, r, req.query.RoomCode);
-                await new Promise(resolve => setTimeout(resolve, 2000));
+                await new Promise(resolve => setTimeout(resolve, 1000));
                 show_ne.showne(req.query.RoomCode).then(r => {
                     after = r[0];
                 })
             }
             else {
                 importExcelData2MySQL(process.cwd() + '/file_uploads/' + req.file.filename, res, r, req.query.RoomCode);
-                await new Promise(resolve => setTimeout(resolve, 5000));
+                await new Promise(resolve => setTimeout(resolve, 1000));
                 show_ne.showne(req.query.RoomCode).then( r => {
                     after = r[0];
                 })
             }
 
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            await new Promise(resolve => setTimeout(resolve, 1000));
             console.log(before)
             console.log("before")
             console.log(after)
