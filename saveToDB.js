@@ -12,9 +12,12 @@ var config =
 };
     
     const sql = require('mssql');
+const Null = require('tedious/lib/data-types/null');
     
 async function importne(Title, Content, Point, Code) 
 {
+    if (Point = Null)
+        Point = -1;
     let pool = await sql.connect(config);
     try 
     {
@@ -22,10 +25,9 @@ async function importne(Title, Content, Point, Code)
         //console.log(`insert into Stories (Title, Content, Point, RoomId) values (${title}, ${content}, ${point}, ${roomid})`)
         //let products = await pool.request().query(`insert into Stories (Title, Content, Point, RoomId) values ('${title}', '${content}', ${point}, ${roomid})`);
         ps.input('title', sql.VarChar(50), '-- commented')
-        ps.input('content', sql.VarChar(200), '-- commented')
+        ps.input('content', sql.VarChar(250), '-- commented')
         ps.input('point', sql.Int, '-- commented')
         ps.input('code', sql.Int, '-- commented')
-        value = []
         await ps.prepare("insert into Stories (Title, Content, Point, IsJiraStory, RoomId) values (@title, @content, @point, 0, (SELECT Id FROM Rooms WHERE Code = @code))", async (err) => {
             // ... error checks
             //console.log(err);

@@ -15,12 +15,13 @@ const path = require('path') //npm install path
 const csvtojson = require('csvtojson'); //npm install csvtojson
 
 var getRecords = require('./export.js')
+var getRecord = require('./exportthieu.js')
 const http = require('http');
 const https = require('https')
 
 var jwt = require('jsonwebtoken');
 
-var import_ne = require('/home/wanki/Workspace/BMW/Project/saveToDB.js')
+var import_ne = require('./saveToDB.js')
 var show_ne = require('./displayResult.js');
 var getNOR = require('./getNumOfRecord.js');
 const { Console } = require('console');
@@ -159,7 +160,7 @@ app.post('/api/import', upload.single("uploadfile"), (req, res) => {
         if (r >= 20)
             res.send("Too much Stories, could not import anymore");
         else {
-            getRecords.exportne(req.query.RoomCode).then(r => {
+            getRecord.exportthieu(req.query.RoomCode).then(r => {
                 before = r[0];
             })
 
